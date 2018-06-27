@@ -19,7 +19,7 @@ package com.dscvit.android.nearlly
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.core.app.NotificationManagerCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 
 private const val TAG = "MessageReadReceiver"

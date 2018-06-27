@@ -23,18 +23,18 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.os.Messenger
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.CarExtender
-import androidx.core.app.NotificationCompat.CarExtender.UnreadConversation
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.RemoteInput
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationCompat.CarExtender
+import android.support.v4.app.NotificationCompat.CarExtender.UnreadConversation
+import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.app.RemoteInput
 
 const val READ_ACTION = "com.dscvit.android.nearlly.ACTION_MESSAGE_READ"
 const val REPLY_ACTION = "com.dscvit.android.nearlly.ACTION_MESSAGE_REPLY"
 const val CONVERSATION_ID = "conversation_id"
 const val EXTRA_VOICE_REPLY = "extra_voice_reply"
 
-class MyMessagingService : Service() {
+class NearbyMessagingService : Service() {
 
     private val mMessenger = Messenger(IncomingHandler())
     private lateinit var mNotificationManager: NotificationManagerCompat

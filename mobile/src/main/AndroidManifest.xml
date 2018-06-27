@@ -21,7 +21,7 @@
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
 
-        <service android:name=".MyMessagingService"></service>
+        <service android:name=".NearbyMessagingService"></service>
 
         <receiver android:name=".MessageReadReceiver">
             <intent-filter>
