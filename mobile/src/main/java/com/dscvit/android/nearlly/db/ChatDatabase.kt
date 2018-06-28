@@ -12,6 +12,6 @@ import com.dscvit.android.nearlly.model.converter.DateConverter
 abstract class ChatDatabase : RoomDatabase() {
 
     abstract fun messageDao(): ChatDao
-//    lateinit var INSTANCE: ChatDatabase
+    @Volatile lateinit var INSTANCE: ChatDatabase
 
 }

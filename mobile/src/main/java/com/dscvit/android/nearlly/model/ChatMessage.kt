@@ -7,7 +7,7 @@ import java.util.*
 @Entity
 data class ChatMessage(
         @PrimaryKey(autoGenerate = true)
-        val id: Int = -1,
+        val id: Int,
         val sender: String = "",
         val message: String = "",
         val color: String = "",
