@@ -9,6 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyAm4F8lo8ASp1zpq-YA9BQfp5u5hrcgmbo" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,14 +26,14 @@
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
 
-        <service android:name=".NearbyMessagingService"></service>
+        <service android:name=".auto.NearbyMessagingService"></service>
 
-        <receiver android:name=".MessageReadReceiver">
+        <receiver android:name=".auto.MessageReadReceiver">
             <intent-filter>
                 <action android:name="com.dscvit.android.nearlly.ACTION_MESSAGE_READ" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".MessageReplyReceiver">
+        <receiver android:name=".auto.MessageReplyReceiver">
             <intent-filter>
                 <action android:name="com.dscvit.android.nearlly.ACTION_MESSAGE_REPLY" />
             </intent-filter>

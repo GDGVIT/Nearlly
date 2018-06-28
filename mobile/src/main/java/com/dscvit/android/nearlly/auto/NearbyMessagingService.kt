@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dscvit.android.nearlly
+package com.dscvit.android.nearlly.auto
 
 import android.app.PendingIntent
 import android.app.Service
