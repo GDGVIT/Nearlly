@@ -1,15 +1,19 @@
 package com.dscvit.android.nearlly.ui.fragment
 
+import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +27,10 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import com.dscvit.android.nearlly.MainActivity
 import com.dscvit.android.nearlly.adapter.ChatAdapter
+import com.dscvit.android.nearlly.di.Injectable
 import com.dscvit.android.nearlly.model.ChatMessage
 import com.dscvit.android.nearlly.ui.viewmodel.ChatViewModel
 import com.google.android.gms.common.ConnectionResult
@@ -33,15 +40,15 @@ import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
 
-class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, Injectable {
 
-    private val TAG = (activity as AppCompatActivity)::class.java.simpleName
+    private val TAG = MainActivity::class.java.simpleName
     private val REQUEST_RESOLVE_ERROR = 1001
 
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    private lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var adapter: ChatAdapter
     private lateinit var chatViewModel: ChatViewModel
@@ -100,7 +107,7 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
         fab_send.setOnClickListener {
             val messageText = text_input_message.text.toString()
             if(messageText.isNotEmpty() && messageText.isNotBlank()) {
-                fab_send.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_chevron_right_white_24dp))
+                fab_send.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_loop_white_24dp))
                 fab_send.startAnimation(mRotateAnimation)
                 publishMessage(ChatMessage(
                         chatViewModel.userName ?: "Username",
@@ -124,8 +131,17 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
                 .setResultCallback { status ->
                     if(status.isSuccess) {
                         chatViewModel.addMessage(chatMessage)
+                    } else {
+                        Toast.makeText(context, "Message not sent", Toast.LENGTH_SHORT).show()
                     }
+                    resetMessageSendAnimation()
+                    fab_send.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_chevron_right_white_24dp))
                 }
+    }
+
+    private fun resetMessageSendAnimation() {
+        mRotateAnimation.cancel()
+        mRotateAnimation.reset()
     }
 
     private fun setUpRecyclerViews() {
@@ -189,16 +205,51 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
         fun newInstance() = ChatFragment()
     }
 
+    private fun subscribe() {
+        Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener)
+                .setResultCallback { status ->
+                    if (status.isSuccess) {
+                        Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Not able to connect", Toast.LENGTH_SHORT).show()
+                    }
+                }
+    }
+
     override fun onConnected(p0: Bundle?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        subscribe()
     }
 
     override fun onConnectionSuspended(p0: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
-    override fun onConnectionFailed(p0: ConnectionResult) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onConnectionFailed(connectionResult: ConnectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(activity, REQUEST_RESOLVE_ERROR)
+            } catch (e: IntentSender.SendIntentException) {
+                e.printStackTrace()
+            }
+        } else {
+            Log.e(TAG, "GoogleApiClient connection failed")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        when(requestCode) {
+            REQUEST_RESOLVE_ERROR -> {
+                if (requestCode == RESULT_OK) {
+                    mGoogleApiClient.connect()
+                } else {
+                    Log.e(TAG, "GoogleApiClient connection failed. Unable to resolve.")
+                }
+            }
+            else -> {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
+        }
     }
 
 }
