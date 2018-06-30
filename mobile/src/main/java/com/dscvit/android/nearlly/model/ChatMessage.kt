@@ -6,10 +6,12 @@ import java.util.*
 
 @Entity
 data class ChatMessage(
+        var sender: String,
+        var message: String
+) {
         @PrimaryKey(autoGenerate = true)
-        val id: Int,
-        val sender: String = "",
-        val message: String = "",
-        val color: String = "",
-        val date: Date = Date()
-)
+        var id: Int = 0
+
+        var color: String = ""
+        var date: Date = Date()
+}

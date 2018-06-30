@@ -1,6 +1,7 @@
 package com.dscvit.android.nearlly.db
 
 import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -13,5 +14,5 @@ interface ChatDao {
     fun insertMessage(message: ChatMessage)
 
     @Query("SELECT * FROM chatmessage")
-    fun fetchMessages(): LiveData<List<ChatMessage>>
+    fun fetchMessages(): DataSource.Factory<Int, ChatMessage>
 }

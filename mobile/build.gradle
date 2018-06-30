@@ -44,6 +44,8 @@ dependencies {
 
     // Anko
     implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.19.3"
 
     def lifecycle_version = "1.1.1"
     def room_version = "1.1.0"
@@ -60,7 +62,7 @@ dependencies {
     kapt "android.arch.lifecycle:compiler:$lifecycle_version"
 
     // Paging
-//    implementation "android.arch.paging:runtime:$paging_version"
+    implementation "android.arch.paging:runtime:$paging_version"
 
     // Navigation
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
