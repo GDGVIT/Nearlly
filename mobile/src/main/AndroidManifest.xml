@@ -3,6 +3,7 @@
     package="com.dscvit.android.nearlly">
 
     <application
+        android:name=".ChatApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

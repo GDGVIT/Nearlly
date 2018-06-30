@@ -34,6 +34,7 @@ import com.dscvit.android.nearlly.di.Injectable
 import com.dscvit.android.nearlly.model.ChatMessage
 import com.dscvit.android.nearlly.ui.viewmodel.ChatViewModel
 import com.google.android.gms.common.ConnectionResult
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.experimental.launch
@@ -145,24 +146,22 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
     }
 
     private fun setUpRecyclerViews() {
-        adapter = ChatAdapter { }
-        chat_recyclerview.layoutManager
-        launch(UI) {
-            val linearLayoutManager = LinearLayoutManager(activity)
-            linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-            with(chat_recyclerview) {
-                layoutManager = linearLayoutManager
-                hasFixedSize()
-                adapter = adapter
-            }
+        adapter = ChatAdapter {
+            Toast.makeText(context, "Item clicked", Toast.LENGTH_SHORT).show()
         }
+        val linearLayoutManager = LinearLayoutManager(activity)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        chat_recyclerview.layoutManager = linearLayoutManager
+        chat_recyclerview.adapter = adapter
         populateRecyclerView()
     }
 
     private fun populateRecyclerView() {
         activity?.let {
             chatViewModel.chatMessages.observe(it, Observer {
-                launch(UI) { adapter.submitList(it) }
+                launch(UI) {
+                    adapter.submitList(it)
+                }
             })
         }
     }

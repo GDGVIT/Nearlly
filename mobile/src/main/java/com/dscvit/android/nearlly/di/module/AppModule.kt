@@ -17,7 +17,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideGron(): Gson = Gson()
+    fun provideGson(): Gson = Gson()
 
     @Provides
     @Singleton
