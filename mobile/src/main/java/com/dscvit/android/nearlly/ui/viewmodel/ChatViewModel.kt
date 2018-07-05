@@ -1,30 +1,26 @@
 package com.dscvit.android.nearlly.ui.viewmodel
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.paging.PagedList
-import android.content.SharedPreferences
 import com.dscvit.android.nearlly.model.ChatMessage
 import com.dscvit.android.nearlly.repo.ChatRepo
-import com.dscvit.android.nearlly.utils.Constants
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.coroutines.experimental.bg
-import org.jetbrains.anko.custom.async
-import org.jetbrains.anko.doAsync
 import javax.inject.Inject
 
 class ChatViewModel @Inject constructor(val chatRepo: ChatRepo): ViewModel() {
 
-    var userName: String? = null
+    var userName: MutableLiveData<String?> = MutableLiveData()
+    var color: MutableLiveData<Int> = MutableLiveData()
+
     lateinit var chatMessages: LiveData<PagedList<ChatMessage>>
 
     init {
-        userName = chatRepo.getUserName()
+
+        userName.postValue(chatRepo.getUserName())
+        color.postValue(chatRepo.getColor())
+
         initChatMessages()
     }
 
@@ -38,6 +34,16 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo): ViewModel() {
         launch {
             chatRepo.addMessage(chatMessage)
         }
+    }
+
+    fun saveUserName(userNameInput: String) {
+        userName.postValue(userNameInput)
+        chatRepo.saveUserName(userNameInput)
+    }
+
+    fun saveColor(colorInput: Int) {
+        color.postValue(colorInput)
+        chatRepo.saveColor(colorInput)
     }
 
 }

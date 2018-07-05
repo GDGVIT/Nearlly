@@ -7,11 +7,11 @@ import java.util.*
 @Entity
 data class ChatMessage(
         var sender: String,
-        var message: String
+        var message: String,
+        var color: Int
 ) {
         @PrimaryKey(autoGenerate = true)
         var id: Int = 0
 
-        var color: String = ""
         var date: Date = Date()
 }

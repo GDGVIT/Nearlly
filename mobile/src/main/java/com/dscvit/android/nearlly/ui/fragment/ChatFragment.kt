@@ -28,6 +28,9 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.dscvit.android.nearlly.MainActivity
 import com.dscvit.android.nearlly.adapter.ChatAdapter
 import com.dscvit.android.nearlly.di.Injectable
@@ -38,6 +41,7 @@ import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.coroutines.experimental.bg
 import javax.inject.Inject
 
 
@@ -54,9 +58,14 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
     private lateinit var adapter: ChatAdapter
     private lateinit var chatViewModel: ChatViewModel
 
+    private lateinit var navController: NavController
+
     private lateinit var mGoogleApiClient: GoogleApiClient
     private lateinit var mMessageListener: MessageListener
     private lateinit var mMessage: Message
+
+    private var userName: String? = null
+    private var color: Int? = null
 
     private val mRotateAnimation = RotateAnimation(0.0f, 360.0f,
             Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
@@ -71,11 +80,28 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
         super.onViewCreated(view, savedInstanceState)
 
         chatViewModel = ViewModelProviders.of(this, viewModelFactory).get(ChatViewModel::class.java)
+        navController = findNavController()
 
+        initViewModels()
         setUpRecyclerViews()
         setUpMessageSendViews()
         buildGoogleApiClient()
         buildMessageListener()
+
+        if (userName == null) {
+            launch(UI) {
+                findNavController().navigate(R.id.action_chatFragment_to_profileFragment4)
+            }
+        }
+    }
+
+    private fun initViewModels() {
+        chatViewModel.userName.observe(this, Observer {
+            userName = it
+        })
+        chatViewModel.color.observe(this, Observer {
+            color = it
+        })
     }
 
     private fun buildMessageListener() {
@@ -111,11 +137,13 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
                 fab_send.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_loop_white_24dp))
                 fab_send.startAnimation(mRotateAnimation)
                 publishMessage(ChatMessage(
-                        chatViewModel.userName ?: "Username",
-                        messageText
+                        userName ?: "Username",
+                        messageText,
+                        color ?: 0
                 ))
                 hideSoftKeyboard(activity, it)
                 text_input_message.clearFocus()
+                text_input_message.clearComposingText()
             }
         }
     }
