@@ -8,16 +8,12 @@
         android:name="com.dscvit.android.nearlly.ui.fragment.ChatFragment"
         android:label="ChatFragment" >
         <action
-            android:id="@+id/action_chatFragment_to_profileFragment4"
+            android:id="@+id/action_chatFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.dscvit.android.nearlly.ui.fragment.ProfileFragment"
-        android:label="ProfileFragment" >
-        <action
-            android:id="@+id/action_profileFragment_to_chatFragment5"
-            app:destination="@id/chatFragment" />
-    </fragment>
+        android:label="ProfileFragment" ></fragment>
 
 </navigation>

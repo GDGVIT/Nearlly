@@ -2,6 +2,7 @@ package com.dscvit.android.nearlly.ui.fragment
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -14,9 +15,11 @@ import com.dscvit.android.nearlly.MainActivity
 import com.dscvit.android.nearlly.R
 import com.dscvit.android.nearlly.di.Injectable
 import com.dscvit.android.nearlly.ui.viewmodel.ChatViewModel
+import com.dscvit.android.nearlly.utils.Constants
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.textColor
 import petrov.kristiyan.colorpicker.ColorPicker
@@ -29,10 +32,15 @@ class ProfileFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var preferences: SharedPreferences
 
     private lateinit var chatViewModel: ChatViewModel
 
     private lateinit var navController: NavController
+
+    private var userNameInput = ""
+    private var colorInput = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         listener?.onFragmentInteraction("some message")
@@ -54,7 +62,7 @@ class ProfileFragment : Fragment(), Injectable {
             ColorPicker(activity)
                     .setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
                         override fun onChooseColor(position: Int, color: Int) {
-                            chatViewModel.saveColor(color)
+                            colorInput = color
                         }
 
                         override fun onCancel() {
@@ -67,9 +75,25 @@ class ProfileFragment : Fragment(), Injectable {
         }
 
         fab_profile_done.setOnClickListener {
+            userNameInput = textInputLayout.editText?.text.toString()
+            Log.i(TAG, "USER NAME : ${userNameInput}")
             launch(UI) {
-                chatViewModel.saveUserName(textInputLayout.editText?.text.toString())
-                findNavController().popBackStack(R.id.action_profileFragment_to_chatFragment5, false)
+//                chatViewModel.saveColor(colorInput)
+//                chatViewModel.saveUserName(userNameInput)
+//
+//                val bundle = bundleOf(
+//                        Constants.PREF_USERNAME_KEY to userNameInput,
+//                        Constants.PREF_COLOR_KEY to colorInput
+//                )
+
+                preferences.edit()
+                        .putString(Constants.PREF_USERNAME_KEY, userNameInput)
+                        .putInt(Constants.PREF_COLOR_KEY, colorInput)
+                        .commit()
+
+                preferences.edit().putBoolean(Constants.PREF_FIRST_TIME_KEY, false).commit()
+
+                findNavController().popBackStack()
             }
         }
     }

@@ -7,11 +7,11 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,19 +29,17 @@ import android.view.animation.RotateAnimation
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.dscvit.android.nearlly.MainActivity
 import com.dscvit.android.nearlly.adapter.ChatAdapter
 import com.dscvit.android.nearlly.di.Injectable
 import com.dscvit.android.nearlly.model.ChatMessage
 import com.dscvit.android.nearlly.ui.viewmodel.ChatViewModel
+import com.dscvit.android.nearlly.utils.Constants
 import com.google.android.gms.common.ConnectionResult
-import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.coroutines.experimental.bg
 import javax.inject.Inject
 
 
@@ -54,6 +52,8 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var preferences: SharedPreferences
 
     private lateinit var adapter: ChatAdapter
     private lateinit var chatViewModel: ChatViewModel
@@ -73,6 +73,7 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         listener?.onFragmentInteraction("some message")
+        checkIfFirstTime()
         return inflater.inflate(R.layout.fragment_chat, container, false)
     }
 
@@ -80,25 +81,45 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
         super.onViewCreated(view, savedInstanceState)
 
         chatViewModel = ViewModelProviders.of(this, viewModelFactory).get(ChatViewModel::class.java)
-        navController = findNavController()
 
+//        checkArgs()
         initViewModels()
         setUpRecyclerViews()
         setUpMessageSendViews()
         buildGoogleApiClient()
         buildMessageListener()
+    }
 
-        if (userName == null) {
+    private fun checkIfFirstTime() {
+        navController = findNavController()
+        val isFirstTime = preferences.getBoolean(Constants.PREF_FIRST_TIME_KEY, true)
+        if (isFirstTime) {
             launch(UI) {
-                findNavController().navigate(R.id.action_chatFragment_to_profileFragment4)
+                navController.navigate(R.id.action_chatFragment_to_profileFragment)
             }
         }
     }
 
+//    private fun checkArgs() {
+//        arguments?.let {
+//            launch(UI) {
+//                with(chatViewModel) {
+//                    val userNameInput = it.getString(Constants.PREF_USERNAME_KEY)
+//                    userNameInput?.let {
+//                        saveUserName(it)
+//                    }
+//                    saveColor(it.getInt(Constants.PREF_COLOR_KEY))
+//                }
+//            }
+//        }
+//    }
+
     private fun initViewModels() {
+
         chatViewModel.userName.observe(this, Observer {
             userName = it
         })
+
         chatViewModel.color.observe(this, Observer {
             color = it
         })
@@ -192,6 +213,11 @@ class ChatFragment : Fragment(), GoogleApiClient.ConnectionCallbacks, GoogleApiC
                 }
             })
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        chatViewModel.fetchData()
     }
 
     override fun onStart() {

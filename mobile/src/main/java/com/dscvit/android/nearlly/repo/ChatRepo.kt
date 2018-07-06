@@ -24,10 +24,10 @@ class ChatRepo @Inject constructor(val dao: ChatDao, val preferences: SharedPref
 
     fun getUserName(): String? = preferences.getString(Constants.PREF_USERNAME_KEY, null)
 
-    fun saveUserName(userName: String) = preferences.edit().putString(Constants.PREF_USERNAME_KEY, userName).commit()
+    fun saveUserName(userName: String) = preferences.edit().putString(Constants.PREF_USERNAME_KEY, userName).apply()
 
     fun getColor() = preferences.getInt(Constants.PREF_COLOR_KEY, 0)
 
-    fun saveColor(colorInput: Int) = preferences.edit().putInt(Constants.PREF_COLOR_KEY, colorInput).commit()
+    fun saveColor(colorInput: Int) = preferences.edit().putInt(Constants.PREF_COLOR_KEY, colorInput).apply()
 
 }

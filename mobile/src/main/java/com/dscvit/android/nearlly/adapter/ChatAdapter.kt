@@ -9,6 +9,7 @@ import com.dscvit.android.nearlly.R
 import com.dscvit.android.nearlly.model.ChatMessage
 import com.dscvit.android.nearlly.utils.inflate
 import kotlinx.android.synthetic.main.item_chat_message.view.*
+import org.jetbrains.anko.textColor
 
 class ChatAdapter(
         private val listener: (ChatMessage) -> Unit
@@ -24,6 +25,8 @@ class ChatAdapter(
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(chatMessage: ChatMessage, listener: (ChatMessage) -> Unit) {
+            itemView.text_chat_username.textColor = chatMessage.color
+
             itemView.text_chat_username.text = chatMessage.sender
             itemView.text_chat_message.text = chatMessage.message
         }

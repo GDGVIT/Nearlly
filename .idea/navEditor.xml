@@ -19,7 +19,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_chatFragment_to_profileFragment4">
+                            <entry key="action_chatFragment_to_profileFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -34,18 +34,9 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="183" />
-                            <option name="y" value="-29" />
+                            <option name="x" value="179" />
+                            <option name="y" value="-58" />
                           </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_profileFragment_to_chatFragment5">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
                         </option>
                       </LayoutPositions>
                     </value>

@@ -17,7 +17,10 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo): ViewModel() {
     lateinit var chatMessages: LiveData<PagedList<ChatMessage>>
 
     init {
+        fetchData()
+    }
 
+    fun fetchData() {
         userName.postValue(chatRepo.getUserName())
         color.postValue(chatRepo.getColor())
 
